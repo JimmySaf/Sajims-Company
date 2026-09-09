@@ -7,7 +7,6 @@ import Techstore from "./components/Techstore";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
-import TidioChat from "./components/TidioChat";
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
      <Contact />
      <Footer />
      <ScrollToTop />
-     <TidioChat />
     </>
   );
 }
