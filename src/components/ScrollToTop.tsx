@@ -15,7 +15,10 @@ export default function ScrollToTop() {
     };
 
     window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
+
+    return () => {
+      window.removeEventListener("scroll", toggleVisibility);
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -35,7 +38,27 @@ export default function ScrollToTop() {
           transition={{ duration: 0.25 }}
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-slate-900 shadow-lg shadow-black/30 transition hover:bg-yellow-300 hover:scale-105 md:bottom-8 md:right-8"
+          className="
+            fixed
+            bottom-6
+            left-6
+            z-50
+            flex
+            h-12
+            w-12
+            items-center
+            justify-center
+            rounded-full
+            bg-yellow-400
+            text-slate-900
+            shadow-lg
+            shadow-black/30
+            transition
+            hover:bg-yellow-300
+            hover:scale-105
+            md:bottom-8
+            md:left-8
+          "
         >
           <ArrowUp size={20} strokeWidth={2.5} />
         </motion.button>
