@@ -52,7 +52,7 @@ export default function Footer() {
             <a href="#" className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/20">
                 <img
-                  src="/logo.jpeg"
+                  src="/logo.png"
                   alt="Sajims"
                   className="h-full w-full object-cover"
                 />
