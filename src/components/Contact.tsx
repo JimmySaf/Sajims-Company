@@ -18,6 +18,7 @@ export default function Contact() {
     message: "",
   });
 
+
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const handleChange = (
@@ -50,6 +51,7 @@ export default function Contact() {
       });
 
       const result = await response.json();
+     
 
       if (result.success) {
         setStatus("success");
