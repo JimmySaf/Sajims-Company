@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import {
-    Mail,
+  Mail,
   Phone,
   MapPin,
   Send,
   Clock,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -16,18 +18,52 @@ export default function Contact() {
     message: "",
   });
 
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Replace with your form handling logic (EmailJS, Formspree, API, etc.)
-    console.log("Form submitted:", formData);
-    alert("Thank you! Your message has been received.");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setStatus("loading");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "YOUR_ACCESS_KEY_HERE", // ← paste your key here
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || "New message from Sajims website",
+          message: formData.message,
+          from_name: "Sajims Website",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+
+        // Reset success message after 5 seconds
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus("error");
+    }
   };
 
   return (
@@ -40,8 +76,7 @@ export default function Contact() {
       <div className="pointer-events-none absolute -left-40 bottom-20 h-[400px] w-[400px] rounded-full bg-emerald-500/5 blur-3xl" />
 
       <div className="relative mx-auto max-w-[1500px] px-6 py-24 sm:px-8 md:py-32 lg:px-16 lg:py-40">
-        
-        {/* ===================== HEADER ===================== */}
+        {/* Header */}
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -55,9 +90,7 @@ export default function Contact() {
             </p>
             <h2 className="max-w-xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">
               Let’s start a
-              <span className="mt-2 block text-slate-400">
-                conversation.
-              </span>
+              <span className="mt-2 block text-slate-400">conversation.</span>
             </h2>
           </motion.div>
 
@@ -69,15 +102,14 @@ export default function Contact() {
             className="lg:col-span-6 lg:col-start-7"
           >
             <p className="text-xl leading-relaxed text-slate-300 md:text-2xl">
-              Whether you have a project idea, need technology products, 
-              or just want to learn more about Sajims — we’d love to hear from you.
+              Whether you have a project idea, need technology products, or just
+              want to learn more about Sajims — we’d love to hear from you.
             </p>
           </motion.div>
         </div>
 
-        {/* ===================== CONTENT ===================== */}
+        {/* Content */}
         <div className="mt-20 grid gap-10 lg:mt-28 lg:grid-cols-12 lg:gap-16">
-          
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -94,10 +126,10 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-slate-400">Email</p>
                   <a
-                    href="mailto:safarijimmy25@gmail.com"
+                    href="mailto:info@sajims.com"
                     className="mt-1 block text-base font-medium text-white transition hover:text-cyan-300"
                   >
-                    safarijimmy25@gmail.com
+                    info@sajims.com
                   </a>
                 </div>
               </div>
@@ -109,10 +141,10 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-slate-400">Phone</p>
                   <a
-                    href="tel:+254791939576"
+                    href="tel:+254700000000"
                     className="mt-1 block text-base font-medium text-white transition hover:text-cyan-300"
                   >
-                    +254 791 939 576
+                    +254 700 000 000
                   </a>
                 </div>
               </div>
@@ -134,7 +166,9 @@ export default function Contact() {
                   <Clock size={20} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-400">Working Hours</p>
+                  <p className="text-sm font-medium text-slate-400">
+                    Working Hours
+                  </p>
                   <p className="mt-1 text-base font-medium text-white">
                     Mon – Fri: 8:00 AM – 6:00 PM
                   </p>
@@ -142,11 +176,10 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Quick note */}
             <div className="mt-12 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
               <p className="text-sm leading-7 text-slate-400">
-                We typically respond within 24 hours on business days. 
-                For urgent requests, feel free to call us directly.
+                We typically respond within 24 hours on business days. For
+                urgent requests, feel free to call us directly.
               </p>
             </div>
           </motion.div>
@@ -221,19 +254,19 @@ export default function Contact() {
                   <option value="" className="bg-[#0a1e1b]">
                     Select a subject
                   </option>
-                  <option value="software" className="bg-[#0a1e1b]">
+                  <option value="Software Development" className="bg-[#0a1e1b]">
                     Software Development
                   </option>
-                  <option value="techstore" className="bg-[#0a1e1b]">
+                  <option value="TechStore / Products" className="bg-[#0a1e1b]">
                     TechStore / Products
                   </option>
-                  <option value="consultation" className="bg-[#0a1e1b]">
+                  <option value="Consultation" className="bg-[#0a1e1b]">
                     Consultation
                   </option>
-                  <option value="careers" className="bg-[#0a1e1b]">
+                  <option value="Careers" className="bg-[#0a1e1b]">
                     Careers
                   </option>
-                  <option value="other" className="bg-[#0a1e1b]">
+                  <option value="Other" className="bg-[#0a1e1b]">
                     Other
                   </option>
                 </select>
@@ -258,15 +291,39 @@ export default function Contact() {
                 />
               </div>
 
+              {/* Status Messages */}
+              {status === "success" && (
+                <div className="mt-6 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+                  <CheckCircle2 size={18} />
+                  Message sent successfully! We’ll get back to you soon.
+                </div>
+              )}
+
+              {status === "error" && (
+                <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  Something went wrong. Please try again or email us directly.
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="group mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-7 py-4 text-sm font-semibold text-slate-900 transition-all duration-300 hover:bg-yellow-300 sm:w-auto"
+                disabled={status === "loading"}
+                className="group mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-7 py-4 text-sm font-semibold text-slate-900 transition-all duration-300 hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
               >
-                Send Message
-                <Send
-                  size={16}
-                  className="transition-transform duration-300 group-hover:translate-x-0.5"
-                />
+                {status === "loading" ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Send Message
+                    <Send
+                      size={16}
+                      className="transition-transform duration-300 group-hover:translate-x-0.5"
+                    />
+                  </>
+                )}
               </button>
             </form>
           </motion.div>
