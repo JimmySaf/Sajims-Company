@@ -126,10 +126,10 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-slate-400">Email</p>
                   <a
-                    href="mailto:info@sajims.com"
+                    href="mailto:safarijimmy25@gmail.com"
                     className="mt-1 block text-base font-medium text-white transition hover:text-cyan-300"
                   >
-                    info@sajims.com
+                    safarijimmy25@gmail.com
                   </a>
                 </div>
               </div>
@@ -141,10 +141,10 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-slate-400">Phone</p>
                   <a
-                    href="tel:+254700000000"
+                    href="tel:+254791939576"
                     className="mt-1 block text-base font-medium text-white transition hover:text-cyan-300"
                   >
-                    +254 700 000 000
+                    +254 791 939 576
                   </a>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-slate-400">Location</p>
                   <p className="mt-1 text-base font-medium text-white">
-                    Nairobi, Kenya
+                    Mombasa, Kenya
                   </p>
                 </div>
               </div>
