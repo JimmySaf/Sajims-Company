@@ -72,11 +72,11 @@ export default function Footer() {
 
             <div className="mt-8 space-y-3">
               <a
-                href="mailto:info@sajims.com"
+                href="mailto:safarijimmy25@gmail.com"
                 className="flex items-center gap-3 text-sm text-slate-400 transition hover:text-cyan-300"
               >
                 <Mail size={16} />
-                info@sajims.com
+                safarijimmy25@gmail.com
               </a>
               <a
                 href="tel:+254791939576"
