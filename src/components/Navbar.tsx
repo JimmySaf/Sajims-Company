@@ -142,7 +142,7 @@ export default function Navbar() {
           <a href="#" className="flex shrink-0 items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/5 shadow-md backdrop-blur-sm transition duration-300 hover:scale-105 hover:shadow-lg">
               <img
-                src="/logo.jpeg"
+                src="/logo.png"
                 alt="Sajims Logo"
                 className="h-full w-full object-cover"
               />
