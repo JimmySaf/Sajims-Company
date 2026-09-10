@@ -40,7 +40,7 @@ export default function Contact() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "YOUR_ACCESS_KEY_HERE", // ← paste your key here
+         access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           name: formData.name,
           email: formData.email,
           subject: formData.subject || "New message from Sajims website",
