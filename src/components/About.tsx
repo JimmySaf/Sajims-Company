@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { value: "50+", label: "Projects & Solutions" },
-  { value: "15+", label: "Clients & Partners" },
+  { value: "14+", label: "Projects & Solutions" },
+  { value: "7+", label: "Clients & Partners" },
   { value: "24/7", label: "Technical Support" },
   { value: "100%", label: "Commitment" },
 ];
@@ -307,6 +307,93 @@ export default function About() {
             ))}
           </div>
         </div>
+ 
+{/* ===================== FOUNDER / CEO ===================== */}
+<div id="founder" className="mt-28 scroll-mt-28 lg:mt-36">
+  <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+    
+    {/* Image */}
+    <motion.div
+      initial={{ opacity: 0, x: -30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7 }}
+      className="lg:col-span-5"
+    >
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+        <div className="aspect-[4/5] w-full">
+          <img
+            src="/founder.png"   
+            alt="Founder and CEO of Sajims"
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        <div className="absolute bottom-5 left-5 rounded-full border border-white/10 bg-black/50 px-4 py-2 backdrop-blur-md">
+          <p className="text-xs font-medium text-white">Founder & CEO</p>
+        </div>
+      </div>
+    </motion.div>
+
+    {/* Content */}
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, delay: 0.1 }}
+      className="lg:col-span-7"
+    >
+      <p className="mb-5 text-xs font-semibold uppercase tracking-[0.35em] text-cyan-400/80">
+        Leadership
+      </p>
+
+      <h2 className="max-w-xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+        Meet the Founder
+        <span className="mt-2 block text-slate-400">& CEO</span>
+      </h2>
+
+      <p className="mt-4 text-xl font-medium text-white">
+        Engineer Jimmy Safari
+      </p>
+      <p className="mt-1 text-sm text-cyan-300">
+        Founder & Chief Executive Officer
+      </p>
+
+      <div className="mt-8 space-y-5 text-base leading-8 text-slate-400 md:text-lg">
+        <p>
+          Sajims was founded with a clear goal: to help organizations and
+          individuals use technology in practical, meaningful ways —
+          through reliable software solutions and quality tech products.
+        </p>
+        <p>
+          With a focus on software development and the growing TechStore
+          vision, the company is building a bridge between digital
+          solutions and everyday technology needs across Kenya and beyond.
+        </p>
+      </div>
+
+      {/* Quote */}
+      <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <p className="text-base italic leading-7 text-slate-300">
+          “Technology should not be complicated. It should help people
+          work better, grow faster, and access tools that actually make a
+          difference.”
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-8 flex flex-wrap items-center gap-4">
+        <a
+          href="#contact"
+          className="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-yellow-300"
+        >
+          Get in touch
+          <ArrowRight size={16} />
+        </a>
+      </div>
+    </motion.div>
+  </div>
+</div>
 
         {/* ===================== CAREERS ===================== */}
         <div id="careers" className="mt-28 scroll-mt-28 lg:mt-36">
