@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+type FormStatus = "idle" | "loading" | "success" | "error";
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -18,64 +20,95 @@ export default function Contact() {
     message: "",
   });
 
-
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+    // Remove previous messages when the user starts editing again
+    if (status === "success" || status === "error") {
+      setStatus("idle");
+      setErrorMessage("");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  setStatus("loading");
+    setStatus("loading");
+    setErrorMessage("");
 
-  try {
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        from_name: "Sajims Website",
-      }),
-    });
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
 
-    const result = await response.json();
-
-    console.log("Web3Forms response:", result);
-
-    if (response.ok && result.success === true) {
-      setStatus("success");
-
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
-
-      // Keep success message visible
+    // Check that the environment variable exists
+    if (!accessKey) {
+      console.error("Web3Forms access key is missing.");
+      setErrorMessage(
+        "Contact form configuration is missing. Please try again later."
+      );
+      setStatus("error");
       return;
     }
 
-    console.error("Web3Forms submission failed:", result);
-    setStatus("error");
-  } catch (error) {
-    console.error("Contact form error:", error);
-    setStatus("error");
-  }
-};
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          from_name: "Sajims Website",
+        }),
+      });
+
+      const result = await response.json();
+
+      console.log("Web3Forms response:", result);
+
+      // Only show success when both the HTTP request
+      // and Web3Forms response confirm success
+      if (response.ok && result.success === true) {
+        setStatus("success");
+
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+
+        return;
+      }
+
+      console.error("Web3Forms submission failed:", result);
+
+      setErrorMessage(
+        result.message || "Message could not be sent. Please try again."
+      );
+      setStatus("error");
+    } catch (error) {
+      console.error("Contact form error:", error);
+
+      setErrorMessage(
+        "Unable to connect to the contact service. Please try again."
+      );
+      setStatus("error");
+    }
+  };
 
   return (
     <section
@@ -99,9 +132,12 @@ export default function Contact() {
             <p className="mb-6 text-xs font-semibold uppercase tracking-[0.35em] text-cyan-400/80">
               Contact Us
             </p>
+
             <h2 className="max-w-xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">
               Let’s start a
-              <span className="mt-2 block text-slate-400">conversation.</span>
+              <span className="mt-2 block text-slate-400">
+                conversation.
+              </span>
             </h2>
           </motion.div>
 
@@ -134,6 +170,7 @@ export default function Contact() {
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
                   <Mail size={20} />
                 </div>
+
                 <div>
                   <p className="text-sm font-medium text-slate-400">Email</p>
                   <a
@@ -149,6 +186,7 @@ export default function Contact() {
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
                   <Phone size={20} />
                 </div>
+
                 <div>
                   <p className="text-sm font-medium text-slate-400">Phone</p>
                   <a
@@ -164,8 +202,11 @@ export default function Contact() {
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
                   <MapPin size={20} />
                 </div>
+
                 <div>
-                  <p className="text-sm font-medium text-slate-400">Location</p>
+                  <p className="text-sm font-medium text-slate-400">
+                    Location
+                  </p>
                   <p className="mt-1 text-base font-medium text-white">
                     Mombasa, Kenya
                   </p>
@@ -176,6 +217,7 @@ export default function Contact() {
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
                   <Clock size={20} />
                 </div>
+
                 <div>
                   <p className="text-sm font-medium text-slate-400">
                     Working Hours
@@ -215,6 +257,7 @@ export default function Contact() {
                   >
                     Full Name
                   </label>
+
                   <input
                     type="text"
                     id="name"
@@ -234,6 +277,7 @@ export default function Contact() {
                   >
                     Email Address
                   </label>
+
                   <input
                     type="email"
                     id="email"
@@ -254,6 +298,7 @@ export default function Contact() {
                 >
                   Subject
                 </label>
+
                 <select
                   id="subject"
                   name="subject"
@@ -265,10 +310,16 @@ export default function Contact() {
                   <option value="" className="bg-[#0a1e1b]">
                     Select a subject
                   </option>
-                  <option value="Software Development" className="bg-[#0a1e1b]">
+                  <option
+                    value="Software Development"
+                    className="bg-[#0a1e1b]"
+                  >
                     Software Development
                   </option>
-                  <option value="TechStore / Products" className="bg-[#0a1e1b]">
+                  <option
+                    value="TechStore / Products"
+                    className="bg-[#0a1e1b]"
+                  >
                     TechStore / Products
                   </option>
                   <option value="Consultation" className="bg-[#0a1e1b]">
@@ -290,6 +341,7 @@ export default function Contact() {
                 >
                   Message
                 </label>
+
                 <textarea
                   id="message"
                   name="message"
@@ -302,17 +354,20 @@ export default function Contact() {
                 />
               </div>
 
-              {/* Status Messages */}
+              {/* Success Message */}
               {status === "success" && (
                 <div className="mt-6 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
                   <CheckCircle2 size={18} />
-                  Message sent successfully! We’ll get back to you soon.
+                  <span>
+                    Message sent successfully! We’ll get back to you soon.
+                  </span>
                 </div>
               )}
 
+              {/* Error Message */}
               {status === "error" && (
                 <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                 Message could not be sent. Please try again or email us directly.
+                  {errorMessage || "Message could not be sent. Please try again."}
                 </div>
               )}
 
