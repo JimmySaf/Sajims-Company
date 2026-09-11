@@ -30,43 +30,52 @@ export default function Contact() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("loading");
+  e.preventDefault();
 
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-         access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject || "New message from Sajims website",
-          message: formData.message,
-          from_name: "Sajims Website",
-        }),
+  setStatus("loading");
+
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        from_name: "Sajims Website",
+      }),
+    });
+
+    const result = await response.json();
+
+    console.log("Web3Forms response:", result);
+
+    if (response.ok && result.success === true) {
+      setStatus("success");
+
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
       });
 
-      const result = await response.json();
-     
-
-      if (result.success) {
-        setStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-
-        // Reset success message after 5 seconds
-        setTimeout(() => setStatus("idle"), 5000);
-      } else {
-        setStatus("error");
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus("error");
+      // Keep success message visible
+      return;
     }
-  };
+
+    console.error("Web3Forms submission failed:", result);
+    setStatus("error");
+  } catch (error) {
+    console.error("Contact form error:", error);
+    setStatus("error");
+  }
+};
 
   return (
     <section
@@ -303,7 +312,7 @@ export default function Contact() {
 
               {status === "error" && (
                 <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                  Something went wrong. Please try again or email us directly.
+                 Message could not be sent. Please try again or email us directly.
                 </div>
               )}
 
