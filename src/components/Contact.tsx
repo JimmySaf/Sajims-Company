@@ -208,7 +208,7 @@ export default function Contact() {
                     Location
                   </p>
                   <p className="mt-1 text-base font-medium text-white">
-                    Mombasa, Kenya
+                    Nairobi, Kenya
                   </p>
                 </div>
               </div>

@@ -87,7 +87,7 @@ export default function Footer() {
               </a>
               <div className="flex items-center gap-3 text-sm text-slate-400">
                 <MapPin size={16} />
-                Nairobi, Kenya
+                Nairobi,Kenya
               </div>
             </div>
           </motion.div>
