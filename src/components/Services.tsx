@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -13,6 +15,9 @@ import {
   Layout,
   Server,
 } from "lucide-react";
+
+/* Palette (same as Navbar, Hero and About)
+   cream #fcf8ee   orange #fc9414   deep orange text #b86300   peach #fde7c7   ink slate-900 */
 
 const mainServices = [
   {
@@ -56,6 +61,8 @@ const mainServices = [
     description:
       "Quality computer gadgets, laptops, smartphones, components and accessories available for businesses and individuals.",
     points: ["Laptops & PCs", "Smartphones", "Accessories", "Hardware support"],
+    // The store is a product, not a service, so it gets a warm highlight and a link
+    featured: { label: "Visit TechStore", href: "#techstore" },
   },
 ];
 
@@ -68,18 +75,40 @@ const extraCapabilities = [
   { icon: Code2, title: "API Development" },
 ];
 
+const processStrip = [
+  { step: "01", title: "Discover", desc: "Understand goals & requirements" },
+  { step: "02", title: "Design", desc: "Architecture & user experience" },
+  { step: "03", title: "Build", desc: "Develop, test and refine" },
+  { step: "04", title: "Deliver", desc: "Launch, support & improve" },
+];
+
+/* Shared style tokens */
+const card =
+  "rounded-3xl border border-stone-200 bg-white/70 shadow-sm shadow-stone-900/5 transition-all duration-500 hover:border-[#fc9414]/50 hover:bg-white hover:shadow-xl hover:shadow-[#fc9414]/10";
+const iconTile =
+  "flex items-center justify-center bg-[#fc9414]/15 text-[#b86300]";
+
+/* Section label: same pill as the hero badge */
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#fc9414]/30 bg-[#fc9414]/10 px-4 py-1.5 text-sm font-semibold text-[#b86300]">
+      <span className="h-1.5 w-1.5 rounded-full bg-[#fc9414]" />
+      {children}
+    </p>
+  );
+}
+
 export default function Services() {
   return (
     <section
       id="services"
-      className="relative overflow-hidden bg-[#050505] text-white"
+      className="relative scroll-mt-20 overflow-hidden border-t border-stone-200/70 bg-[#fcf8ee] text-slate-900"
     >
-      {/* Background glows */}
-      <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-3xl" />
-      <div className="pointer-events-none absolute -left-40 bottom-40 h-[400px] w-[400px] rounded-full bg-emerald-500/5 blur-3xl" />
+      {/* Soft peach shape and glow (echoes the hero) */}
+      <div className="pointer-events-none absolute -left-40 top-24 h-[26rem] w-[26rem] -rotate-12 rounded-[4rem] bg-[#fde7c7]/50" />
+      <div className="pointer-events-none absolute -right-40 bottom-40 h-80 w-80 rounded-full bg-[#fc9414]/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-[1500px] px-6 py-24 sm:px-8 md:py-32 lg:px-16 lg:py-40">
-        
         {/* ===================== HEADER ===================== */}
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
           <motion.div
@@ -89,12 +118,10 @@ export default function Services() {
             transition={{ duration: 0.8 }}
             className="lg:col-span-5"
           >
-            <p className="mb-6 text-xs font-semibold uppercase tracking-[0.35em] text-cyan-400/80">
-              Our Services
-            </p>
-            <h2 className="max-w-xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">
-              Solutions designed
-              <span className="mt-2 block text-slate-400">
+            <Label>Our Services</Label>
+            <h2 className="max-w-xl text-4xl leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">
+              <span className="block font-light">Solutions designed</span>
+              <span className="mt-2 block font-extrabold">
                 for real business needs.
               </span>
             </h2>
@@ -107,14 +134,15 @@ export default function Services() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="lg:col-span-6 lg:col-start-7"
           >
-            <p className="text-xl leading-relaxed text-slate-300 md:text-2xl">
-              From software engineering to technology products, we provide 
-              end-to-end services that help organizations build, scale and 
+            <p className="text-xl leading-relaxed text-slate-800 md:text-2xl">
+              From software engineering to technology products, we provide
+              end-to-end services that help organizations build, scale and
               operate with confidence.
             </p>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-400 md:text-lg">
-              Every engagement starts with understanding your goals so we can 
-              recommend the right technical approach and deliver measurable results.
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
+              Every engagement starts with understanding your goals so we can
+              recommend the right technical approach and deliver measurable
+              results.
             </p>
           </motion.div>
         </div>
@@ -123,6 +151,7 @@ export default function Services() {
         <div className="mt-20 grid gap-6 sm:grid-cols-2 lg:mt-28 lg:grid-cols-3">
           {mainServices.map((service, index) => {
             const Icon = service.icon;
+            const featured = "featured" in service ? service.featured : null;
             return (
               <motion.div
                 key={service.title}
@@ -131,28 +160,50 @@ export default function Services() {
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.6, delay: index * 0.07 }}
                 whileHover={{ y: -6 }}
-                className="group flex flex-col rounded-3xl border border-white/10 bg-white/[0.03] p-7 transition-all duration-500 hover:border-cyan-500/25 hover:bg-white/[0.05] md:p-8"
+                className={`group relative flex flex-col overflow-hidden p-7 md:p-8 ${card} ${
+                  featured ? "!bg-[#fff1da] hover:!bg-[#ffe9c6]" : ""
+                }`}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300 transition-colors group-hover:bg-cyan-500/25">
-                  <Icon size={22} />
+                {/* Orange accent that grows on hover */}
+                <span className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-[#fc9414] transition-transform duration-500 group-hover:scale-x-100" />
+
+                <div className="flex items-start justify-between">
+                  <div
+                    className={`h-12 w-12 rounded-2xl transition-colors group-hover:bg-[#fc9414]/25 ${iconTile}`}
+                  >
+                    <Icon size={22} />
+                  </div>
+                  <span className="text-sm font-bold text-slate-300">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
 
                 <h3 className="mt-6 text-xl font-semibold">{service.title}</h3>
-                <p className="mt-3 flex-1 text-sm leading-7 text-slate-400">
+                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">
                   {service.description}
                 </p>
 
-                <ul className="mt-6 space-y-2 border-t border-white/10 pt-5">
+                <ul className="mt-6 space-y-2 border-t border-stone-200 pt-5">
                   {service.points.map((point) => (
                     <li
                       key={point}
-                      className="flex items-center gap-2 text-sm text-slate-400"
+                      className="flex items-center gap-2 text-sm text-slate-700"
                     >
-                      <span className="h-1 w-1 rounded-full bg-cyan-400" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#fc9414]" />
                       {point}
                     </li>
                   ))}
                 </ul>
+
+                {featured && (
+                  <a
+                    href={featured.href}
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#b86300] transition-all group-hover:gap-3"
+                  >
+                    {featured.label}
+                    <ArrowRight size={16} />
+                  </a>
+                )}
               </motion.div>
             );
           })}
@@ -167,11 +218,10 @@ export default function Services() {
             transition={{ duration: 0.7 }}
             className="mb-10"
           >
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-cyan-400/80">
-              Additional Capabilities
-            </p>
-            <h3 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Supporting services that complete the picture.
+            <Label>Additional Capabilities</Label>
+            <h3 className="max-w-3xl text-3xl tracking-tight sm:text-4xl">
+              <span className="font-light">Supporting services that </span>
+              <span className="font-extrabold">complete the picture.</span>
             </h3>
           </motion.div>
 
@@ -185,12 +235,13 @@ export default function Services() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
-                  className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center transition hover:border-cyan-500/20 hover:bg-white/[0.05]"
+                  whileHover={{ y: -4 }}
+                  className="flex flex-col items-center rounded-2xl border border-stone-200 bg-white/70 p-5 text-center shadow-sm shadow-stone-900/5 transition hover:border-[#fc9414]/50 hover:bg-white hover:shadow-lg hover:shadow-[#fc9414]/10"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-300">
+                  <div className={`h-10 w-10 rounded-full ${iconTile}`}>
                     <Icon size={18} />
                   </div>
-                  <p className="mt-3 text-sm font-medium text-slate-300">
+                  <p className="mt-3 text-sm font-medium text-slate-800">
                     {item.title}
                   </p>
                 </motion.div>
@@ -200,24 +251,28 @@ export default function Services() {
         </div>
 
         {/* ===================== PROCESS STRIP ===================== */}
-        <div className="mt-24 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/5 sm:grid-cols-2 lg:mt-32 lg:grid-cols-4">
-          {[
-            { step: "01", title: "Discover", desc: "Understand goals & requirements" },
-            { step: "02", title: "Design", desc: "Architecture & user experience" },
-            { step: "03", title: "Build", desc: "Develop, test and refine" },
-            { step: "04", title: "Deliver", desc: "Launch, support & improve" },
-          ].map((item, index) => (
+        <div className="mt-24 grid gap-px overflow-hidden rounded-3xl border border-stone-200 bg-stone-200 shadow-sm shadow-stone-900/5 sm:grid-cols-2 lg:mt-32 lg:grid-cols-4">
+          {processStrip.map((item, index) => (
             <motion.div
               key={item.step}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-[#0a1e1b]/80 p-7 md:p-8"
+              className="group relative bg-white/80 p-7 transition-colors hover:bg-[#fff1da] md:p-8"
             >
-              <p className="text-sm font-semibold text-cyan-400">{item.step}</p>
+              <p className="text-3xl font-bold text-[#fc9414]">{item.step}</p>
               <h4 className="mt-3 text-xl font-semibold">{item.title}</h4>
-              <p className="mt-2 text-sm text-slate-400">{item.desc}</p>
+              <p className="mt-2 text-sm text-slate-600">{item.desc}</p>
+
+              {/* Arrow to the next step (desktop) */}
+              {index < processStrip.length - 1 && (
+                <ArrowRight
+                  aria-hidden="true"
+                  size={18}
+                  className="absolute right-5 top-9 hidden text-[#fc9414]/60 transition group-hover:translate-x-1 lg:block"
+                />
+              )}
             </motion.div>
           ))}
         </div>
@@ -228,18 +283,23 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="mt-28 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0c2622] to-[#050505] p-8 md:p-12 lg:mt-36 lg:p-14"
+          className="relative mt-28 overflow-hidden rounded-3xl bg-slate-900 p-8 shadow-2xl shadow-slate-900/20 md:p-12 lg:mt-36 lg:p-14"
         >
-          <div className="grid items-center gap-8 lg:grid-cols-12">
+          {/* Warm glow so the dark card still feels part of the palette */}
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#fc9414]/25 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-[#fde7c7]/10 blur-3xl" />
+
+          <div className="relative grid items-center gap-8 lg:grid-cols-12">
             <div className="lg:col-span-8">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
+              <p className="mb-4 text-sm font-semibold text-[#fc9414]">
                 Let’s work together
               </p>
-              <h3 className="max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">
-                Need a reliable technology partner?
+              <h3 className="max-w-2xl text-3xl leading-tight text-white sm:text-4xl">
+                <span className="font-light">Need a reliable </span>
+                <span className="font-extrabold">technology partner?</span>
               </h3>
-              <p className="mt-4 max-w-xl text-base text-slate-400">
-                Tell us what you’re building or the challenge you’re facing. 
+              <p className="mt-4 max-w-xl text-base text-slate-300">
+                Tell us what you’re building or the challenge you’re facing.
                 We’ll help you find the right path forward.
               </p>
             </div>
@@ -247,7 +307,7 @@ export default function Services() {
             <div className="lg:col-span-4 lg:flex lg:justify-end">
               <a
                 href="#contact"
-                className="group inline-flex items-center gap-3 rounded-full bg-yellow-400 px-7 py-4 font-semibold text-slate-900 transition-all duration-300 hover:bg-yellow-300"
+                className="group inline-flex items-center gap-3 rounded-xl bg-[#fc9414] px-8 py-4 font-semibold text-slate-900 shadow-lg shadow-[#fc9414]/20 transition-all duration-300 hover:bg-[#ffa62e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Start a Conversation
                 <ArrowRight
