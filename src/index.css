@@ -15,6 +15,8 @@ body,
 body {
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
+  background-color: #F8FAFC;
+  color: #0F172A;
 }
 
 * {
