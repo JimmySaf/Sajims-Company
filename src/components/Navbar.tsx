@@ -1,399 +1,197 @@
-import { useEffect, useRef, useState } from "react";
+"use client";
+ 
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Menu,
-  X,
-  ChevronDown,
-  Search,
-  Code2,
-  ShoppingBag,
-} from "lucide-react";
-
-interface ChildLink {
-  label: string;
-  href: string;
-  icon?: React.ReactNode;
-  description?: string;
-}
-
+import { Menu, X } from "lucide-react";
+ 
+/* Palette: cream #fcf8ee, orange #fc9414, ink (slate-900) */
+ 
 interface NavItem {
   label: string;
   href: string;
-  children?: ChildLink[];
 }
-
+ 
+// Add or remove tabs here, the navbar adapts automatically.
 const navItems: NavItem[] = [
-  {
-    label: "About",
-    href: "#about",
-    children: [
-      {
-        label: "Company",
-        href: "#about",
-        description: "Who we are and what we do",
-      },
-      {
-        label: "Our Team",
-        href: "#teams",
-        description: "Meet the people behind Sajims",
-      },
-      {
-        label: "Careers",
-        href: "#careers",
-        description: "Open roles and how we hire",
-      },
-      {
-        label: "How We Work",
-        href: "#how-we-work",
-        description: "Our process, from kickoff to ship",
-      },
-    ],
-  },
-  {
-    label: "What we do",
-    href: "#what-we-do",
-  },
-  {
-    label: "Services",
-    href: "#services",
-    children: [
-      {
-        label: "Software Development",
-        href: "#services",
-        icon: <Code2 size={18} />,
-        description: "Custom software, web & mobile apps",
-      },
-      {
-        label: "Visit TechHub Store",
-        href: "#techstore",
-        icon: <ShoppingBag size={18} />,
-        description: "Computer gadgets & software products",
-      },
-    ],
-  },
-  {
-    label: "Teams",
-    href: "#teams",
-  },
-  {
-    label: "TechStore",
-    href: "#techstore",
-  },
+  { label: "Home", href: "#" },
+  { label: "About Us", href: "#about" },
+  { label: "TechStore", href: "#techstore" },
+  { label: "Services", href: "#services" },
+  { label: "Teams", href: "#teams" },
 ];
-
+ 
+/* In-page sections the navbar points to (used for the active-tab highlight). */
+const sectionIds = navItems
+  .map((i) => i.href)
+  .filter((h) => h.startsWith("#") && h.length > 1);
+ 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fc9414]/60";
+ 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdown, setDropdown] = useState<string | null>(null);
-  const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const desktopNavRef = useRef<HTMLDivElement>(null);
-
+  const [activeHref, setActiveHref] = useState("#");
+ 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+ 
+      // Current section = the one whose top most recently passed under the navbar.
+      let best = "#";
+      let bestTop = -Infinity;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id.slice(1));
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= 120 && top > bestTop) {
+          best = id;
+          bestTop = top;
+        }
+      }
+      setActiveHref(best);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+ 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "unset";
-    if (!mobileOpen) setMobileDropdown(null);
-  }, [mobileOpen]);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (
-        desktopNavRef.current &&
-        !desktopNavRef.current.contains(e.target as Node)
-      ) {
-        setDropdown(null);
-      }
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setDropdown(null);
-    }
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKey);
     return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "unset";
     };
+  }, [mobileOpen]);
+ 
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log("Searching products for:", searchQuery);
-    }
-  };
-
+ 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 w-full border-b transition-all duration-300 ${
+        className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 ${
           scrolled
-            ? "border-white/10 bg-gradient-to-r from-[#0c2622] via-[#0a1e1b] to-[#050505] shadow-lg shadow-black/20 backdrop-blur-md"
-            : "border-white/5 bg-gradient-to-r from-[#0c2622]/95 via-[#0a1e1b]/95 to-[#050505]/95 backdrop-blur-md"
+            ? "bg-[#fcf8ee]/95 shadow-md shadow-stone-900/5 backdrop-blur-md"
+            : "bg-[#fcf8ee]/80 backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <a href="#" className="flex shrink-0 items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/5 shadow-md backdrop-blur-sm transition duration-300 hover:scale-105 hover:shadow-lg">
-              <img
-                src="/logo.png"
-                alt="Sajims Logo"
-                className="h-full w-full object-cover"
-              />
-            </div>
-
+        {/* Thin demarcation line: orange, fading out at both ends */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#fc9414] to-transparent"
+        />
+ 
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-8">
+          {/* Logo: icon, small orange "Sajims" above a bold "Company" */}
+          <a
+            href="#"
+            className={`flex items-center gap-1.5 justify-self-start rounded-md ${focusRing}`}
+          >
+            <img
+              src="/logolatest.png"
+              alt="Sajims logo"
+              className="h-9 w-auto object-contain"
+            />
             <div className="flex flex-col leading-none">
-              <span className="text-xl font-bold tracking-tight text-white">
-                SAJIMS
+              <span className="text-[11px] font-semibold text-[#fc9414]">
+                SajimsTECH
               </span>
-              <span className="text-[10px] uppercase tracking-[0.35em] text-slate-400">
-                Tech Company
+              <span className="-mt-px text-lg font-semibold leading-none tracking-tight text-slate-900">
+                Company
               </span>
             </div>
           </a>
-
-          {/* Desktop Navigation */}
-          <nav ref={desktopNavRef} className="hidden items-center gap-1 lg:flex">
-            {navItems.map((item) => (
-              <div key={item.label} className="relative flex items-center">
+ 
+          {/* Tabs (centered) */}
+          <nav className="hidden items-center gap-8 lg:flex xl:gap-10">
+            {navItems.map((item) => {
+              const isActive = activeHref === item.href;
+              return (
                 <a
+                  key={item.label}
                   href={item.href}
-                  className="flex items-center px-3 py-2 text-[15px] font-medium text-slate-200 transition hover:text-cyan-300"
+                  aria-current={isActive ? "page" : undefined}
+                  className={`relative rounded-sm py-1 text-[15px] transition ${focusRing} ${
+                    isActive
+                      ? "text-[#fc9414]"
+                      : "text-slate-800 hover:text-[#fc9414]"
+                  }`}
                 >
                   {item.label}
+                  {isActive && (
+                    <span className="absolute inset-x-0 -bottom-1 h-[1.5px] bg-[#fc9414]" />
+                  )}
                 </a>
-
-                {item.children && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDropdown(dropdown === item.label ? null : item.label)
-                    }
-                    aria-expanded={dropdown === item.label}
-                    aria-haspopup="true"
-                    className="rounded-full p-1 text-slate-400 transition hover:text-cyan-300"
-                  >
-                    <ChevronDown
-                      size={15}
-                      className={`transition-transform duration-300 ${
-                        dropdown === item.label ? "rotate-180 text-cyan-300" : ""
-                      }`}
-                    />
-                  </button>
-                )}
-
-                {/* Dropdown */}
-                {item.children && (
-                  <AnimatePresence>
-                    {dropdown === item.label && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                        transition={{ duration: 0.18, ease: "easeOut" }}
-                        className="absolute left-0 top-full z-50 mt-1 w-80 rounded-xl border border-white/10 bg-[#0b1f1c]/95 p-3 shadow-xl shadow-black/40 backdrop-blur-xl"
-                      >
-                        {item.children.map((child) => (
-                          <a
-                            key={child.label}
-                            href={child.href}
-                            onClick={() => setDropdown(null)}
-                            className="flex items-start gap-3 rounded-lg p-3 transition hover:bg-white/5"
-                          >
-                            {child.icon && (
-                              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300">
-                                {child.icon}
-                              </div>
-                            )}
-                            <div>
-                              <p className="text-sm font-medium text-white">
-                                {child.label}
-                              </p>
-                              {child.description && (
-                                <p className="mt-0.5 text-xs text-slate-400">
-                                  {child.description}
-                                </p>
-                              )}
-                            </div>
-                          </a>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </nav>
-
-          {/* Search + Contact */}
-          <div className="hidden items-center gap-3 lg:flex">
-            <form onSubmit={handleSearch} className="relative">
-              <div className="flex items-center">
-                <Search
-                  size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products"
-                  className="w-64 rounded-full border border-white/15 bg-white/10 py-2 pl-10 pr-4 text-sm text-white placeholder:text-slate-400 outline-none backdrop-blur-md transition focus:border-cyan-300/50 focus:bg-white/15 focus:ring-2 focus:ring-cyan-300/20 xl:w-80"
-                />
-              </div>
-            </form>
-
+ 
+          {/* Thin vertical line + Contact (right) */}
+          <div className="hidden h-20 items-center justify-self-end lg:flex">
+            {/* Short divider, centred so it stays clear of the top and bottom edges */}
+            <span
+              aria-hidden="true"
+              className="mr-8 h-10 w-px rounded-full bg-[#fc9414]/60 xl:mr-12"
+            />
             <a
               href="#contact"
-              className="rounded-md bg-yellow-400 px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-yellow-500"
+              className={`rounded-lg border border-slate-700 px-6 py-2.5 text-[15px] text-slate-900 transition hover:bg-slate-900 hover:text-white ${focusRing}`}
             >
-              Contact us
+              Contact Us
             </a>
           </div>
-
+ 
           {/* Mobile menu button */}
           <button
-            className="rounded-md p-2 text-white hover:bg-white/10 lg:hidden"
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            className={`rounded-md p-2 text-slate-900 transition hover:bg-slate-900/5 lg:hidden ${focusRing}`}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </header>
-
-      {/* Mobile Menu */}
+ 
+      {/* Mobile menu (sits under the header, which keeps the logo and close button) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-gradient-to-b from-[#0c2622] via-[#0a1e1b] to-[#050505]"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-[#fcf8ee]"
           >
-            <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
-              <a
-                href="#"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2.5"
-              >
-                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-white/20">
-                  <img
-                    src="/logo.jpeg"
-                    alt="Sajims"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <span className="text-xl font-bold text-white">SAJIMS</span>
-              </a>
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="rounded-md p-2 text-white hover:bg-white/10"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="h-[calc(100vh-4rem)] overflow-y-auto px-4 py-6">
-              <form onSubmit={handleSearch} className="mb-6">
-                <div className="relative">
-                  <Search
-                    size={18}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products"
-                    className="w-full rounded-full border border-white/15 bg-white/10 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-400 outline-none backdrop-blur-md focus:border-cyan-300/50 focus:bg-white/15 focus:ring-2 focus:ring-cyan-300/20"
-                  />
-                </div>
-              </form>
-
-              {navItems.map((item) =>
-                item.children ? (
-                  <div key={item.label} className="border-b border-white/10">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setMobileDropdown(
-                          mobileDropdown === item.label ? null : item.label
-                        )
-                      }
-                      className="flex w-full items-center justify-between py-4 text-base font-medium text-white"
-                    >
-                      {item.label}
-                      <ChevronDown
-                        size={18}
-                        className={`text-slate-400 transition-transform duration-300 ${
-                          mobileDropdown === item.label
-                            ? "rotate-180 text-cyan-300"
-                            : ""
-                        }`}
-                      />
-                    </button>
-
-                    <AnimatePresence initial={false}>
-                      {mobileDropdown === item.label && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="space-y-1 pb-4 pl-2">
-                            {item.children.map((child) => (
-                              <a
-                                key={child.label}
-                                href={child.href}
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-3 rounded-lg py-2.5 text-sm text-slate-300 hover:bg-white/5 hover:text-cyan-300"
-                              >
-                                {child.icon && (
-                                  <span className="text-cyan-300">
-                                    {child.icon}
-                                  </span>
-                                )}
-                                <div>
-                                  <p className="font-medium">{child.label}</p>
-                                  {child.description && (
-                                    <p className="text-xs text-slate-500">
-                                      {child.description}
-                                    </p>
-                                  )}
-                                </div>
-                              </a>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
+            <div className="h-full overflow-y-auto px-4 pb-10 pt-28">
+              {navItems.map((item) => {
+                const isActive = activeHref === item.href;
+                return (
                   <a
                     key={item.label}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between border-b border-white/10 py-4 text-base font-medium text-white"
+                    className={`block border-b border-stone-200 py-4 text-lg ${
+                      isActive ? "text-[#fc9414]" : "text-slate-900"
+                    }`}
                   >
                     {item.label}
                   </a>
-                )
-              )}
-
+                );
+              })}
+ 
               <a
                 href="#contact"
                 onClick={() => setMobileOpen(false)}
-                className="mt-8 flex w-full items-center justify-center rounded-md bg-yellow-400 py-3.5 text-base font-semibold text-slate-900"
+                className="mt-8 flex w-full items-center justify-center rounded-lg bg-slate-900 py-3.5 text-base font-medium text-white transition hover:bg-slate-800"
               >
-                Contact us
+                Contact Us
               </a>
             </div>
           </motion.div>
