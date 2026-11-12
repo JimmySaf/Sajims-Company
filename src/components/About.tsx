@@ -87,6 +87,24 @@ const teamRoles = [
   { role: "Project Managers", desc: "Keeping delivery clear and on track" },
 ];
 
+/* Second leader. */
+const salesManager = {
+  name: "Bencarson Ondimu",
+  role: "Sales Manager",
+  tagline: "Sales Manager · Surveyor · GIS Analyst",
+  image: "/salesmanager.png",
+  bio: [
+    "Leads Sajims’ sales and client relationships with a rare technical edge: training in Geomatic Engineering and Geospatial Information Systems from JKUAT.",
+    "As a skilled surveyor and GIS analyst, he understands data, location and precision, so he speaks our clients’ language and recommends solutions that truly fit.",
+  ],
+  skills: [
+    "Geomatic Engineering",
+    "Geospatial Information Systems",
+    "Land Surveying",
+    
+  ],
+};
+
 /* Shared style tokens */
 const card =
   "rounded-3xl border border-stone-200 bg-white/70 shadow-sm shadow-stone-900/5 transition-all duration-500 hover:border-[#fc9414]/50 hover:bg-white hover:shadow-xl hover:shadow-[#fc9414]/10";
@@ -438,6 +456,88 @@ export default function About() {
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a href="#contact" className={primaryBtn}>
                   Get in touch
+                  <ArrowRight
+                    size={16}
+                    className="transition group-hover:translate-x-1"
+                  />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ===================== SALES MANAGER ===================== */}
+        <div id="sales" className="mt-20 scroll-mt-28 lg:mt-28">
+          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* Image (shown first on mobile, on the right on desktop) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7 }}
+              className="lg:order-2 lg:col-span-5"
+            >
+              <div className="relative overflow-hidden rounded-3xl border border-stone-200 bg-[#fde7c7]/60 shadow-xl shadow-stone-900/10">
+                <div className="aspect-[4/5] w-full">
+                  <img
+                    src={salesManager.image}
+                    alt={`${salesManager.role} at Sajims`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                <div className="absolute bottom-5 left-5 rounded-full border border-stone-200 bg-white/85 px-4 py-2 shadow-sm backdrop-blur-md">
+                  <p className="text-xs font-semibold text-slate-900">
+                    {salesManager.role}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="lg:order-1 lg:col-span-7"
+            >
+              <Label>Sales & Clients</Label>
+
+              <h2 className="max-w-xl text-3xl leading-tight tracking-tight sm:text-4xl md:text-5xl">
+                <span className="block font-light">Meet the</span>
+                <span className="mt-1 block font-extrabold">Sales Manager</span>
+              </h2>
+
+              <p className="mt-4 text-xl font-semibold text-slate-900">
+                {salesManager.name}
+              </p>
+              <p className="mt-1 text-sm font-medium text-[#b86300]">
+                {salesManager.tagline}
+              </p>
+
+              <div className="mt-8 space-y-5 text-base leading-8 text-slate-600 md:text-lg">
+                {salesManager.bio.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+
+              {/* Skills */}
+              <ul className="mt-6 flex flex-wrap gap-2.5">
+                {salesManager.skills.map((skill) => (
+                  <li
+                    key={skill}
+                    className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/70 px-4 py-1.5 text-sm font-medium text-slate-800 shadow-sm shadow-stone-900/5"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#fc9414]" />
+                    {skill}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <a href="#contact" className={primaryBtn}>
+                  Talk to sales
                   <ArrowRight
                     size={16}
                     className="transition group-hover:translate-x-1"
