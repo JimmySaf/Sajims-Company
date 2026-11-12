@@ -419,7 +419,7 @@ export default function About() {
 
               <h2 className="max-w-xl text-3xl leading-tight tracking-tight sm:text-4xl md:text-5xl">
                 <span className="block font-light">Meet the Founder</span>
-                <span className="mt-1 block font-extrabold">& CEO</span>
+                <span className="mt-1 block font-extrabold">and CEO</span>
               </h2>
 
               <p className="mt-4 text-xl font-semibold text-slate-900">
